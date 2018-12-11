@@ -50,20 +50,17 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
-var axios_1 = __importDefault(require("axios"));
 var body_parser_1 = __importDefault(require("body-parser"));
-var cookie_parser_1 = __importDefault(require("cookie-parser"));
 var dotenv_1 = __importDefault(require("dotenv"));
 var express_1 = __importDefault(require("express"));
-var express_session_1 = __importDefault(require("express-session"));
 var fs = __importStar(require("fs"));
 var html_literal_1 = __importDefault(require("html-literal"));
 var http = __importStar(require("http"));
 var https = __importStar(require("https"));
-var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var path = __importStar(require("path"));
 var v4_1 = __importDefault(require("uuid/v4"));
 var package_json_1 = require("../package.json");
+var src_1 = require("../src");
 // notify of missing .env file
 if (!fs.existsSync(path.join(__dirname, ".env"))) {
     console.log("Please copy the example configuration file _.env to .env and edit contents as needed");
@@ -71,29 +68,28 @@ if (!fs.existsSync(path.join(__dirname, ".env"))) {
 }
 // load configuration from .env file
 dotenv_1.default.config();
-// application configuration
+// application configuration (parameters are read from the .env file)
 var config = {
     host: process.env.HOST || "localhost",
     port: process.env.PORT ? parseInt(process.env.PORT) : 8080,
     ssl: {
         enabled: process.env.SSL_ENABLED === "true",
         cert: process.env.SSL_CERT || "",
-        key: process.env.SSL_KEY || "",
+        key: process.env.SSL_KEY || ""
     },
-    api: {
+    verifyOnce: {
         baseURL: process.env.API_BASE_URL || "https://test.verifyonce.com/api/verify",
-        auth: {
-            // verify-once integrator id and secret
-            username: process.env.API_AUTH_USERNAME || "",
-            password: process.env.API_AUTH_PASSWORD || "",
-        },
-    },
+        username: process.env.API_USERNAME || "",
+        password: process.env.API_PASSWORD || ""
+    }
 };
-// populate the database
+// create simple in-memory database
 var database = {
     users: [],
-    verifications: [],
+    verifications: []
 };
+// setup verify-once
+var verifyOnce = new src_1.VerifyOnce(config.verifyOnce);
 // run in an async IIFE to be able to use async-await
 (function () { return __awaiter(_this, void 0, void 0, function () {
     var app, server;
@@ -104,32 +100,13 @@ var database = {
         app.use(body_parser_1.default.urlencoded({ extended: false }));
         app.use(body_parser_1.default.json());
         app.use(body_parser_1.default.text());
-        // setup session support
-        app.use(cookie_parser_1.default());
-        app.use(express_session_1.default({
-            secret: "foobar",
-            resave: true,
-            saveUninitialized: true,
-        }));
-        // initialize session middleware
-        app.use(function (request, _response, next) {
-            // should not happen
-            if (!request.session) {
-                throw new Error("Session support is not properly configured");
-            }
-            // user defaults to null if does not exist
-            if (!request.session.user) {
-                request.session.user = null;
-            }
-            next();
-        });
         // handle index page request
-        app.get("/", function (request, response, _next) {
-            response.send(html_literal_1.default(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n      <p>\n        <h1>VerifyOnce integration example</h1>\n      </p>\n\n      <form method=\"post\" action=\"/initiate\">\n        <p>\n          <h2>User info</h2>\n        </p>\n        <p>\n          This is the information that the integrating system already knows and uses to compare against the information received from VerifyOnce.\n        </p>\n        <p><input id=\"firstName\" name=\"firstName\" value=\"John\" /> <label for=\"firstName\">First name</label></p>\n        <p><input id=\"lastName\" name=\"lastName\" value=\"Rambo\" /> <label for=\"lastName\">Last name</label></p>\n        <p><input id=\"country\" name=\"country\" value=\"EST\" /> <label for=\"country\">Country</label></p>\n        <p>\n          <button type=\"submit\">Start verification</button>\n        </p>\n      </form>\n\n      <p>\n        <h2>State</h2>\n      </p>\n      <p>\n        This is the information that the integrator knows internally and that it has received from VerifyOnce. Integrator should use this information to decide whether the user can be considered verified or not.\n      </p>\n      <p>", "</p>\n\n      <p>\n        <em>Version: ", "</em>\n      </p>\n    "], ["\n      <p>\n        <h1>VerifyOnce integration example</h1>\n      </p>\n\n      <form method=\"post\" action=\"/initiate\">\n        <p>\n          <h2>User info</h2>\n        </p>\n        <p>\n          This is the information that the integrating system already knows and uses to compare against the information received from VerifyOnce.\n        </p>\n        <p><input id=\"firstName\" name=\"firstName\" value=\"John\" /> <label for=\"firstName\">First name</label></p>\n        <p><input id=\"lastName\" name=\"lastName\" value=\"Rambo\" /> <label for=\"lastName\">Last name</label></p>\n        <p><input id=\"country\" name=\"country\" value=\"EST\" /> <label for=\"country\">Country</label></p>\n        <p>\n          <button type=\"submit\">Start verification</button>\n        </p>\n      </form>\n\n      <p>\n        <h2>State</h2>\n      </p>\n      <p>\n        This is the information that the integrator knows internally and that it has received from VerifyOnce. Integrator should use this information to decide whether the user can be considered verified or not.\n      </p>\n      <p>", "</p>\n\n      <p>\n        <em>Version: ", "</em>\n      </p>\n    "])), debug({ user: request.session.user, database: database }), package_json_1.version));
+        app.get("/", function (_request, response, _next) {
+            response.send(html_literal_1.default(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n      <p>\n        <h1>VerifyOnce Integration Example</h1>\n      </p>\n\n      <form method=\"post\" action=\"/initiate\">\n        <p>\n          <h2>User info</h2>\n        </p>\n        <p>\n          This is the information that the integrating system already knows and uses to compare against the information received from VerifyOnce.\n        </p>\n        <p><input id=\"firstName\" name=\"firstName\" value=\"John\" /> <label for=\"firstName\">First name</label></p>\n        <p><input id=\"lastName\" name=\"lastName\" value=\"Rambo\" /> <label for=\"lastName\">Last name</label></p>\n        <p><input id=\"country\" name=\"country\" value=\"EST\" /> <label for=\"country\">Country</label></p>\n        <p>\n          <button type=\"submit\">Start verification</button>\n        </p>\n      </form>\n\n      <p>\n        <h2>State</h2>\n      </p>\n      <p>\n        This is the information that the integrator knows internally and that it has received from VerifyOnce.\n      </p>\n      <p>\n        Integrator should use this information to decide whether the user can be considered verified or not.\n      </p>\n      <p>", "</p>\n\n      <p>\n        <em>Version: ", "</em>\n      </p>\n    "], ["\n      <p>\n        <h1>VerifyOnce Integration Example</h1>\n      </p>\n\n      <form method=\"post\" action=\"/initiate\">\n        <p>\n          <h2>User info</h2>\n        </p>\n        <p>\n          This is the information that the integrating system already knows and uses to compare against the information received from VerifyOnce.\n        </p>\n        <p><input id=\"firstName\" name=\"firstName\" value=\"John\" /> <label for=\"firstName\">First name</label></p>\n        <p><input id=\"lastName\" name=\"lastName\" value=\"Rambo\" /> <label for=\"lastName\">Last name</label></p>\n        <p><input id=\"country\" name=\"country\" value=\"EST\" /> <label for=\"country\">Country</label></p>\n        <p>\n          <button type=\"submit\">Start verification</button>\n        </p>\n      </form>\n\n      <p>\n        <h2>State</h2>\n      </p>\n      <p>\n        This is the information that the integrator knows internally and that it has received from VerifyOnce.\n      </p>\n      <p>\n        Integrator should use this information to decide whether the user can be considered verified or not.\n      </p>\n      <p>", "</p>\n\n      <p>\n        <em>Version: ", "</em>\n      </p>\n    "])), debug({ database: database }), package_json_1.version));
         });
-        // handle initiation request
+        // handle initiation request (index page form posts to this)
         app.post("/initiate", function (request, response, next) { return __awaiter(_this, void 0, void 0, function () {
-            var _a, firstName, lastName, country, user, api, initiateResponse, verification, err_1, error;
+            var _a, firstName, lastName, country, user, initiateResponse, verification, err_1, error;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -138,28 +115,25 @@ var database = {
                             id: v4_1.default(),
                             firstName: firstName,
                             lastName: lastName,
-                            country: country,
+                            country: country
                         };
                         database.users.push(user);
-                        // store the logged in user in the session
-                        request.session.user = user;
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 3, , 4]);
-                        api = axios_1.default.create(config.api);
-                        return [4 /*yield*/, api.post("/initiate")];
+                        return [4 /*yield*/, verifyOnce.initiate()];
                     case 2:
                         initiateResponse = _b.sent();
                         verification = {
-                            transactionId: initiateResponse.data.transactionId,
                             userId: user.id,
-                            url: initiateResponse.data.url,
+                            transactionId: initiateResponse.transactionId,
+                            url: initiateResponse.url,
                             isCorrectUser: false,
-                            info: null,
+                            info: null
                         };
                         database.verifications.push(verification);
                         // redirect to the verification page
-                        response.redirect(initiateResponse.data.url);
+                        response.redirect(initiateResponse.url);
                         return [3 /*break*/, 4];
                     case 3:
                         err_1 = _b.sent();
@@ -181,12 +155,14 @@ var database = {
             var info_1, verification_1, user, successOdds, maxSimulatedLatency, simulatedLatency;
             return __generator(this, function (_a) {
                 try {
-                    info_1 = jsonwebtoken_1.default.verify(request.body, config.api.auth.password);
+                    info_1 = verifyOnce.verifyCallbackInfo(request.body);
                     verification_1 = database.verifications.find(function (item) { return item.transactionId === info_1.transaction.id; });
                     // handle failure to find such transaction
                     if (!verification_1) {
                         // you could respond with HTTP 2xx not to get the same info retried
-                        response.status(404).send("Verification with transaction id \"" + info_1.transaction.id + "\" could not be found");
+                        response
+                            .status(404)
+                            .send("Verification with transaction id \"" + info_1.transaction.id + "\" could not be found");
                         return [2 /*return*/];
                     }
                     user = database.users.find(function (item) { return item.id === verification_1.userId; });
@@ -203,7 +179,7 @@ var database = {
                         body: request.body,
                         info: info_1,
                         verification: verification_1,
-                        user: user,
+                        user: user
                     });
                     successOdds = 1 / 2;
                     maxSimulatedLatency = 2000;
@@ -223,9 +199,11 @@ var database = {
                 catch (error) {
                     console.log("received invalid callback", {
                         body: request.body,
-                        error: error,
+                        error: error
                     });
-                    response.status(400).send("Invalid JWT token provided (" + error.message + ")");
+                    response
+                        .status(400)
+                        .send("Invalid JWT token provided (" + error.message + ")");
                 }
                 return [2 /*return*/];
             });
@@ -233,7 +211,7 @@ var database = {
         server = config.ssl.enabled
             ? https.createServer({
                 cert: fs.readFileSync(config.ssl.cert),
-                key: fs.readFileSync(config.ssl.key),
+                key: fs.readFileSync(config.ssl.key)
             }, app)
             : http.createServer(app);
         // start the server
@@ -255,6 +233,7 @@ var database = {
         return [2 /*return*/];
     });
 }); })().catch(function (error) { return console.error(error); });
+// returns whether verified user matches the correct (logged in) user
 function isCorrectUser(verification, user) {
     // consider not valid if identity verification has not been performed
     if (verification.identityVerification === null) {
@@ -263,13 +242,15 @@ function isCorrectUser(verification, user) {
     // require first name to match (case-insensitive)
     if (verification.identityVerification.idFirstName === null ||
         verification.identityVerification.idFirstName === "N/A" ||
-        user.firstName.toLowerCase() !== verification.identityVerification.idFirstName.toLowerCase()) {
+        user.firstName.toLowerCase() !==
+            verification.identityVerification.idFirstName.toLowerCase()) {
         return false;
     }
     // require last name to match (case-insensitive)
     if (verification.identityVerification.idLastName === null ||
         verification.identityVerification.idLastName === "N/A" ||
-        user.lastName.toLowerCase() !== verification.identityVerification.idLastName.toLowerCase()) {
+        user.lastName.toLowerCase() !==
+            verification.identityVerification.idLastName.toLowerCase()) {
         return false;
     }
     // name matches, all good (integrator could choose to verify additional known info such as date of birth etc)

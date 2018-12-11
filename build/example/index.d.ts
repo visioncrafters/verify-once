@@ -6,8 +6,8 @@ export interface User {
     country: string;
 }
 export interface Verification {
-    transactionId: string;
     userId: string;
+    transactionId: string;
     url: string;
     isCorrectUser: boolean;
     info: CallbackInfo | null;

@@ -1,3 +1,5 @@
+import axios, { AxiosInstance } from "axios";
+import { verify } from "jsonwebtoken";
 import {
   CountryCode,
   DocumentVerificationDocumentStatus,
@@ -14,7 +16,7 @@ import {
   RejectDetailsDescription,
   RejectReasonCode,
   RejectReasonDescription,
-  Similarity,
+  Similarity
 } from "jumio";
 
 // enumeration of possible callback statuses
@@ -22,7 +24,7 @@ export enum VerificationStatus {
   UNINITIATED = "UNINITIATED",
   PENDING = "PENDING",
   VERIFIED = "VERIFIED",
-  FAILED = "FAILED",
+  FAILED = "FAILED"
 }
 
 // callback identity verification info
@@ -116,4 +118,40 @@ export interface CallbackInfo {
 export interface InitiateResponse {
   transactionId: string;
   url: string;
+}
+
+export interface VerifyOnceOptions {
+  username: string;
+  password: string;
+  baseUrl?: string;
+}
+
+export class VerifyOnce {
+  private readonly api: AxiosInstance;
+  private readonly options: Required<VerifyOnceOptions>;
+
+  constructor(options: VerifyOnceOptions) {
+    this.options = {
+      baseUrl: "https://verifyonce.com/api/verify",
+      ...options
+    };
+
+    this.api = axios.create({
+      baseURL: this.options.baseUrl,
+      auth: {
+        username: this.options.username,
+        password: this.options.password
+      }
+    });
+  }
+
+  async initiate(): Promise<InitiateResponse> {
+    const response = await this.api.post<InitiateResponse>("/initiate");
+
+    return response.data;
+  }
+
+  verifyCallbackInfo(body: string) {
+    return verify(body, this.options.password) as CallbackInfo;
+  }
 }

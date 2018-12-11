@@ -90,3 +90,15 @@ export interface InitiateResponse {
     transactionId: string;
     url: string;
 }
+export interface VerifyOnceOptions {
+    username: string;
+    password: string;
+    baseUrl?: string;
+}
+export declare class VerifyOnce {
+    private readonly api;
+    private readonly options;
+    constructor(options: VerifyOnceOptions);
+    initiate(): Promise<InitiateResponse>;
+    verifyCallbackInfo(body: string): CallbackInfo;
+}

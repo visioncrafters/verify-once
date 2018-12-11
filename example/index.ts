@@ -1,23 +1,22 @@
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import bodyParser from "body-parser";
-import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import express from "express";
-import session from "express-session";
 import * as fs from "fs";
 import html from "html-literal";
 import * as http from "http";
 import * as https from "https";
-import jwt from "jsonwebtoken";
 import * as path from "path";
 import generateUuid from "uuid/v4";
 
 import { version } from "../package.json";
-import { CallbackInfo, InitiateResponse } from "../src";
+import { CallbackInfo, VerifyOnce } from "../src";
 
 // notify of missing .env file
 if (!fs.existsSync(path.join(__dirname, ".env"))) {
-  console.log("Please copy the example configuration file _.env to .env and edit contents as needed");
+  console.log(
+    "Please copy the example configuration file _.env to .env and edit contents as needed"
+  );
 
   process.exit(1);
 }
@@ -35,8 +34,8 @@ export interface User {
 
 // represents verification attempt in our system
 export interface Verification {
-  transactionId: string;
   userId: string;
+  transactionId: string;
   url: string;
   isCorrectUser: boolean;
   info: CallbackInfo | null;
@@ -56,30 +55,31 @@ interface InitiateRequestParameters {
   dateOfBirth: string;
 }
 
-// application configuration
+// application configuration (parameters are read from the .env file)
 const config = {
   host: process.env.HOST || "localhost",
   port: process.env.PORT ? parseInt(process.env.PORT) : 8080,
   ssl: {
     enabled: process.env.SSL_ENABLED === "true",
     cert: process.env.SSL_CERT || "",
-    key: process.env.SSL_KEY || "",
+    key: process.env.SSL_KEY || ""
   },
-  api: {
-    baseURL: process.env.API_BASE_URL || "https://test.verifyonce.com/api/verify",
-    auth: {
-      // verify-once integrator id and secret
-      username: process.env.API_AUTH_USERNAME || "",
-      password: process.env.API_AUTH_PASSWORD || "",
-    },
-  },
+  verifyOnce: {
+    baseURL:
+      process.env.API_BASE_URL || "https://test.verifyonce.com/api/verify",
+    username: process.env.API_USERNAME || "",
+    password: process.env.API_PASSWORD || ""
+  }
 };
 
-// populate the database
+// create simple in-memory database
 const database: Database = {
   users: [],
-  verifications: [],
+  verifications: []
 };
+
+// setup verify-once
+const verifyOnce = new VerifyOnce(config.verifyOnce);
 
 // run in an async IIFE to be able to use async-await
 (async () => {
@@ -91,36 +91,11 @@ const database: Database = {
   app.use(bodyParser.json());
   app.use(bodyParser.text());
 
-  // setup session support
-  app.use(cookieParser());
-  app.use(
-    session({
-      secret: "foobar",
-      resave: true,
-      saveUninitialized: true,
-    }),
-  );
-
-  // initialize session middleware
-  app.use((request, _response, next) => {
-    // should not happen
-    if (!request.session) {
-      throw new Error("Session support is not properly configured");
-    }
-
-    // user defaults to null if does not exist
-    if (!request.session.user) {
-      request.session.user = null;
-    }
-
-    next();
-  });
-
   // handle index page request
-  app.get("/", (request, response, _next) => {
+  app.get("/", (_request, response, _next) => {
     response.send(html`
       <p>
-        <h1>VerifyOnce integration example</h1>
+        <h1>VerifyOnce Integration Example</h1>
       </p>
 
       <form method="post" action="/initiate">
@@ -142,9 +117,12 @@ const database: Database = {
         <h2>State</h2>
       </p>
       <p>
-        This is the information that the integrator knows internally and that it has received from VerifyOnce. Integrator should use this information to decide whether the user can be considered verified or not.
+        This is the information that the integrator knows internally and that it has received from VerifyOnce.
       </p>
-      <p>${debug({ user: request.session!.user, database })}</p>
+      <p>
+        Integrator should use this information to decide whether the user can be considered verified or not.
+      </p>
+      <p>${debug({ database })}</p>
 
       <p>
         <em>Version: ${version}</em>
@@ -152,46 +130,48 @@ const database: Database = {
     `);
   });
 
-  // handle initiation request
+  // handle initiation request (index page form posts to this)
   app.post("/initiate", async (request, response, next) => {
     // extract initiation parameters
-    const { firstName, lastName, country } = request.body as InitiateRequestParameters;
+    const {
+      firstName,
+      lastName,
+      country
+    } = request.body as InitiateRequestParameters;
 
     // create new user (or load it, take from session etc)
     const user: User = {
       id: generateUuid(),
       firstName,
       lastName,
-      country,
+      country
     };
     database.users.push(user);
 
-    // store the logged in user in the session
-    request.session!.user = user;
-
     // attempt to initiate verification
     try {
-      const api = axios.create(config.api);
-      const initiateResponse = await api.post<InitiateResponse>("/initiate");
+      const initiateResponse = await verifyOnce.initiate();
 
       // create new verification
       const verification: Verification = {
-        transactionId: initiateResponse.data.transactionId,
         userId: user.id,
-        url: initiateResponse.data.url,
+        transactionId: initiateResponse.transactionId,
+        url: initiateResponse.url,
         isCorrectUser: false,
-        info: null,
+        info: null
       };
       database.verifications.push(verification);
 
       // redirect to the verification page
-      response.redirect(initiateResponse.data.url);
+      response.redirect(initiateResponse.url);
     } catch (err) {
       const error = err as AxiosError;
 
       // handle authentication error
       if (error.response && error.response.status === 401) {
-        response.send("Authentication failed, check integrator username and password");
+        response.send(
+          "Authentication failed, check integrator username and password"
+        );
 
         return;
       }
@@ -205,15 +185,23 @@ const database: Database = {
   app.post("/callback", async (request, response, _next) => {
     try {
       // extract callback info and also validate the signature (throws if invalid)
-      const info = jwt.verify(request.body, config.api.auth.password) as CallbackInfo;
+      const info = verifyOnce.verifyCallbackInfo(request.body);
 
       // find the verification from the database
-      const verification = database.verifications.find(item => item.transactionId === info.transaction.id);
+      const verification = database.verifications.find(
+        item => item.transactionId === info.transaction.id
+      );
 
       // handle failure to find such transaction
       if (!verification) {
         // you could respond with HTTP 2xx not to get the same info retried
-        response.status(404).send(`Verification with transaction id "${info.transaction.id}" could not be found`);
+        response
+          .status(404)
+          .send(
+            `Verification with transaction id "${
+              info.transaction.id
+            }" could not be found`
+          );
 
         return;
       }
@@ -223,7 +211,11 @@ const database: Database = {
 
       // the user should exist at this point
       if (!user) {
-        throw new Error(`Verification user with id "${verification.userId}" not found, this should not happen`);
+        throw new Error(
+          `Verification user with id "${
+            verification.userId
+          }" not found, this should not happen`
+        );
       }
 
       // store the verification info
@@ -237,7 +229,7 @@ const database: Database = {
         body: request.body,
         info,
         verification,
-        user,
+        user
       });
 
       // what are the odds of successful response (used to test retry logic)
@@ -261,10 +253,12 @@ const database: Database = {
     } catch (error) {
       console.log("received invalid callback", {
         body: request.body,
-        error,
+        error
       });
 
-      response.status(400).send(`Invalid JWT token provided (${error.message})`);
+      response
+        .status(400)
+        .send(`Invalid JWT token provided (${error.message})`);
     }
   });
 
@@ -273,9 +267,9 @@ const database: Database = {
     ? https.createServer(
         {
           cert: fs.readFileSync(config.ssl.cert),
-          key: fs.readFileSync(config.ssl.key),
+          key: fs.readFileSync(config.ssl.key)
         },
-        app,
+        app
       )
     : http.createServer(app);
 
@@ -300,6 +294,7 @@ const database: Database = {
   });
 })().catch(error => console.error(error));
 
+// returns whether verified user matches the correct (logged in) user
 function isCorrectUser(verification: CallbackInfo, user: User) {
   // consider not valid if identity verification has not been performed
   if (verification.identityVerification === null) {
@@ -310,7 +305,8 @@ function isCorrectUser(verification: CallbackInfo, user: User) {
   if (
     verification.identityVerification.idFirstName === null ||
     verification.identityVerification.idFirstName === "N/A" ||
-    user.firstName.toLowerCase() !== verification.identityVerification.idFirstName.toLowerCase()
+    user.firstName.toLowerCase() !==
+      verification.identityVerification.idFirstName.toLowerCase()
   ) {
     return false;
   }
@@ -319,7 +315,8 @@ function isCorrectUser(verification: CallbackInfo, user: User) {
   if (
     verification.identityVerification.idLastName === null ||
     verification.identityVerification.idLastName === "N/A" ||
-    user.lastName.toLowerCase() !== verification.identityVerification.idLastName.toLowerCase()
+    user.lastName.toLowerCase() !==
+      verification.identityVerification.idLastName.toLowerCase()
   ) {
     return false;
   }
