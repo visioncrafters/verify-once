@@ -533,10 +533,10 @@ jsonwebtoken@^8.4.0:
     lodash.once "^4.0.0"
     ms "^2.1.1"
 
-jumio@^1.27.2:
-  version "1.27.2"
-  resolved "https://registry.yarnpkg.com/jumio/-/jumio-1.27.2.tgz#bfa56d23fedb0631820abb7e953dd1075028a879"
-  integrity sha512-ceNkBdVEegwa8zuPNwZuGZqw7VsQMs41jwpqC6iBtfUX2AvgYEdUEiclxbjjMSSA3WOUEE1i7lM9x/SEbV6mbg==
+jumio@^1.27.3:
+  version "1.27.3"
+  resolved "https://registry.yarnpkg.com/jumio/-/jumio-1.27.3.tgz#81c53b7979b270b85190561d86e964b70ae86bef"
+  integrity sha512-31npDAdFIq1zthPQyV3I4GzaISepFpocVDeC1+2Np0D5wFSbyckS/q3douylz3xztCvctqPPPP0/AOy8qjqDMw==
   dependencies:
     axios "^0.18.0"
     express "^4.16.3"
