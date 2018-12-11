@@ -4,10 +4,10 @@ module.exports = {
       name: "example",
       script: "yarn",
       interpreter: "/bin/bash",
-      args: "workspace jumio start",
+      args: "start",
       env: {
-        NODE_ENV: "production",
-      },
-    },
-  ],
+        NODE_ENV: "production"
+      }
+    }
+  ]
 };
