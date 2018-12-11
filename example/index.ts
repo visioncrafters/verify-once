@@ -22,7 +22,7 @@ if (!fs.existsSync(path.join(__dirname, ".env"))) {
 }
 
 // load configuration from .env file
-dotenv.config();
+dotenv.config({ path: path.join(__dirname, ".env") });
 
 // represents a user in our system
 export interface User {
@@ -65,7 +65,7 @@ const config = {
     key: process.env.SSL_KEY || ""
   },
   verifyOnce: {
-    baseURL:
+    baseUrl:
       process.env.API_BASE_URL || "https://test.verifyonce.com/api/verify",
     username: process.env.API_USERNAME || "",
     password: process.env.API_PASSWORD || ""
