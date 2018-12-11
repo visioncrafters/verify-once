@@ -1,0 +1,12 @@
+{
+  "ext": "ts tsx json",
+  "execMap": {
+    "ts": "node -r ts-node/register --inspect=127.0.0.1:9228"
+  },
+  "watch": ["**/*"],
+  "ignore": [".git", "node_modules"],
+  "verbose": false,
+  "env": {
+    "NODE_ENV": "development"
+  }
+}
