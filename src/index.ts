@@ -22,6 +22,7 @@ import {
 // enumeration of possible callback statuses
 export enum VerificationStatus {
   UNINITIATED = "UNINITIATED",
+  INITIATED = "INITIATED",
   PENDING = "PENDING",
   VERIFIED = "VERIFIED",
   FAILED = "FAILED"
