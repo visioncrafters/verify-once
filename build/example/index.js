@@ -67,7 +67,7 @@ if (!fs.existsSync(path.join(__dirname, ".env"))) {
     process.exit(1);
 }
 // load configuration from .env file
-dotenv_1.default.config();
+dotenv_1.default.config({ path: path.join(__dirname, ".env") });
 // application configuration (parameters are read from the .env file)
 var config = {
     host: process.env.HOST || "localhost",
@@ -78,7 +78,7 @@ var config = {
         key: process.env.SSL_KEY || ""
     },
     verifyOnce: {
-        baseURL: process.env.API_BASE_URL || "https://test.verifyonce.com/api/verify",
+        baseUrl: process.env.API_BASE_URL || "https://test.verifyonce.com/api/verify",
         username: process.env.API_USERNAME || "",
         password: process.env.API_PASSWORD || ""
     }

@@ -1,8 +1,9 @@
 {
     "name": "verify-once",
-    "version": "1.2.0",
+    "version": "1.14.0",
     "description": "VerifyOnce integration library and example",
     "main": "build/src/index.js",
+    "types": "build/src/index.d.ts",
     "repository": "https://github.com/stagnationlab/verify-once.git",
     "author": "Stagnation Lab",
     "license": "MIT",
@@ -15,7 +16,7 @@
         "prettier": "prettier --write src/**/*.ts"
     },
     "dependencies": {
-        "jumio": "^1.27.2"
+        "jumio": "^1.27.3"
     },
     "devDependencies": {
         "@types/dotenv": "^6.1.0",

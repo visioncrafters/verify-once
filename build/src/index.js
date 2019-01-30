@@ -55,6 +55,7 @@ var jsonwebtoken_1 = require("jsonwebtoken");
 var VerificationStatus;
 (function (VerificationStatus) {
     VerificationStatus["UNINITIATED"] = "UNINITIATED";
+    VerificationStatus["INITIATED"] = "INITIATED";
     VerificationStatus["PENDING"] = "PENDING";
     VerificationStatus["VERIFIED"] = "VERIFIED";
     VerificationStatus["FAILED"] = "FAILED";

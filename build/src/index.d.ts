@@ -1,6 +1,7 @@
 import { CountryCode, DocumentVerificationDocumentStatus, DocumentVerificationSource, DocumentVerificationTransactionStatus, DocumentVerificationType, IdentityInvalidReason, IdentityVerificationStatus, IdScanSource, IdScanStatus, IdSubType, IdType, RejectDetailsCode, RejectDetailsDescription, RejectReasonCode, RejectReasonDescription, Similarity } from "jumio";
 export declare enum VerificationStatus {
     UNINITIATED = "UNINITIATED",
+    INITIATED = "INITIATED",
     PENDING = "PENDING",
     VERIFIED = "VERIFIED",
     FAILED = "FAILED"
