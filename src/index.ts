@@ -66,6 +66,7 @@ export interface IdentityCallbackInfo {
   imageUrlFront: string | null;
   imageUrlBack: string | null;
   imageUrlFace: string | null;
+  canRetry: boolean;
 }
 
 // callback identity verification info
@@ -94,23 +95,27 @@ export interface DocumentCallbackInfo {
   originalDocumentUrl: string | null;
 }
 
+export interface Transaction {
+  id: string;
+  integratorId: string;
+  userId: string;
+  createdDate: string;
+  updatedDate: string;
+}
+
+export interface User {
+  id: string;
+  email: string;
+  role: string;
+  scopes: string[];
+  createdDate: string;
+  updatedDate: string;
+}
+
 // callback payload
 export interface CallbackInfo {
-  transaction: {
-    id: string;
-    integratorId: string;
-    userId: string;
-    createdDate: string;
-    updatedDate: string;
-  };
-  user: {
-    id: string;
-    email: string;
-    role: string;
-    scopes: string[];
-    createdDate: string;
-    updatedDate: string;
-  };
+  transaction: Transaction;
+  user: User;
   identityVerification: IdentityCallbackInfo | null;
   documentVerification: DocumentCallbackInfo | null;
 }
