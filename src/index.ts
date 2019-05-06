@@ -25,7 +25,8 @@ export enum VerificationStatus {
   INITIATED = "INITIATED",
   PENDING = "PENDING",
   VERIFIED = "VERIFIED",
-  FAILED = "FAILED"
+  FAILED = "FAILED",
+  LOCKED = "LOCKED"
 }
 
 // callback identity verification info
