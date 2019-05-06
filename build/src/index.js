@@ -59,6 +59,7 @@ var VerificationStatus;
     VerificationStatus["PENDING"] = "PENDING";
     VerificationStatus["VERIFIED"] = "VERIFIED";
     VerificationStatus["FAILED"] = "FAILED";
+    VerificationStatus["LOCKED"] = "LOCKED";
 })(VerificationStatus = exports.VerificationStatus || (exports.VerificationStatus = {}));
 var VerifyOnce = /** @class */ (function () {
     function VerifyOnce(options) {

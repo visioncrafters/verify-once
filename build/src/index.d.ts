@@ -4,7 +4,8 @@ export declare enum VerificationStatus {
     INITIATED = "INITIATED",
     PENDING = "PENDING",
     VERIFIED = "VERIFIED",
-    FAILED = "FAILED"
+    FAILED = "FAILED",
+    LOCKED = "LOCKED"
 }
 export interface IdentityCallbackInfo {
     id: string;
