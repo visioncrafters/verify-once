@@ -104,11 +104,17 @@ export interface Transaction {
   updatedDate: string;
 }
 
+export enum UserStatus {
+  ACTIVE = "ACTIVE",
+  BLOCKED = "BLOCKED"
+}
+
 export interface User {
   id: string;
   email: string;
   role: string;
   scopes: string[];
+  status: UserStatus;
   createdDate: string;
   updatedDate: string;
 }
