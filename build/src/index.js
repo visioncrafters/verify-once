@@ -61,6 +61,11 @@ var VerificationStatus;
     VerificationStatus["FAILED"] = "FAILED";
     VerificationStatus["LOCKED"] = "LOCKED";
 })(VerificationStatus = exports.VerificationStatus || (exports.VerificationStatus = {}));
+var UserStatus;
+(function (UserStatus) {
+    UserStatus["ACTIVE"] = "ACTIVE";
+    UserStatus["BLOCKED"] = "BLOCKED";
+})(UserStatus = exports.UserStatus || (exports.UserStatus = {}));
 var VerifyOnce = /** @class */ (function () {
     function VerifyOnce(options) {
         this.options = __assign({ baseUrl: "https://verifyonce.com/api/verify" }, options);
