@@ -70,6 +70,19 @@ export interface DocumentCallbackInfo {
     imageUrls: string[];
     originalDocumentUrl: string | null;
 }
+export interface AddressCallbackInfo {
+    id: string;
+    userId: string;
+    transactionId: string;
+    countryCode: CountryCode;
+    city: string;
+    state: string | null;
+    postalCode: string | null;
+    address: string;
+    status: VerificationStatus;
+    createdDate: string | null;
+    updatedDate: string | null;
+}
 export interface Transaction {
     id: string;
     integratorId: string;
@@ -95,6 +108,7 @@ export interface CallbackInfo {
     user: User;
     identityVerification: IdentityCallbackInfo | null;
     documentVerification: DocumentCallbackInfo | null;
+    addressVerification: AddressCallbackInfo | null;
 }
 export interface InitiateResponse {
     transactionId: string;
