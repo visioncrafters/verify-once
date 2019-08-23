@@ -325,6 +325,7 @@ export interface IdentityCallbackInfo {
     idDob: string | null;
     idExpiry: string | null;
     rejectReason: IdentityRejectReason | null;
+    isManualReview: boolean;
     callbackJSON: string | null;
     transactionDate: string | null;
     callbackDate: string | null;
