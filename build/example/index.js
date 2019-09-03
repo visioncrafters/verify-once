@@ -78,7 +78,7 @@ var config = {
         key: process.env.SSL_KEY || ""
     },
     verifyOnce: {
-        baseUrl: process.env.API_BASE_URL || "https://test.verifyonce.com/api/verify",
+        baseUrl: process.env.API_BASE_URL || "https://test-app.verifyonce.com/api/verify",
         username: process.env.API_USERNAME || "",
         password: process.env.API_PASSWORD || ""
     }

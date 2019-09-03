@@ -68,7 +68,7 @@ var UserStatus;
 })(UserStatus = exports.UserStatus || (exports.UserStatus = {}));
 var VerifyOnce = /** @class */ (function () {
     function VerifyOnce(options) {
-        this.options = __assign({ baseUrl: "https://verifyonce.com/api/verify" }, options);
+        this.options = __assign({ baseUrl: "https://app.verifyonce.com/api/verify" }, options);
         this.api = axios_1.default.create({
             baseURL: this.options.baseUrl,
             auth: {
