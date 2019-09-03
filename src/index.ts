@@ -161,7 +161,7 @@ export class VerifyOnce {
 
   constructor(options: VerifyOnceOptions) {
     this.options = {
-      baseUrl: "https://verifyonce.com/api/verify",
+      baseUrl: "https://app.verifyonce.com/api/verify",
       ...options
     };
 
