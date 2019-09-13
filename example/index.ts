@@ -66,7 +66,7 @@ const config = {
   },
   verifyOnce: {
     baseUrl:
-      process.env.API_BASE_URL || "https://test.verifyonce.com/api/verify",
+      process.env.API_BASE_URL || "https://test-app.verifyonce.com/api/verify",
     username: process.env.API_USERNAME || "",
     password: process.env.API_PASSWORD || ""
   }
