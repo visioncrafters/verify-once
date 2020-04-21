@@ -10,7 +10,7 @@ import * as path from "path";
 import generateUuid from "uuid/v4";
 
 import { version } from "../package.json";
-import { CallbackInfo, VerifyOnce, CountryCode } from "../src";
+import { CallbackInfo, CountryCode, VerifyOnce } from "../src";
 
 // notify of missing .env file
 if (!fs.existsSync(path.join(__dirname, ".env"))) {

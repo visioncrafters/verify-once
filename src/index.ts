@@ -433,7 +433,7 @@ export class VerifyOnce {
     });
   }
 
-  async initiate(data: InitiateRequest): Promise<InitiateResponse> {
+  async initiate(data?: InitiateRequest): Promise<InitiateResponse> {
     const response = await this.api.post<InitiateResponse>("/initiate", data);
 
     return response.data;
