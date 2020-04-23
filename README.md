@@ -27,16 +27,15 @@ yarn add verify-once
 
 ## Usage
 
-Credentials should be stored in projects config file
+Credentials should be stored in projects config file.
+BaseUrl is optional param, for testing use dev or test prefix, defaults to https://app.verifyonce.com/api/verify
 
-````cmd
+```JSON
 ...
 
 "verifyOnce": {
    "password": "integratorPassword",
    "username": "integratorUserName",
-
-	// optional, for testing use dev or test environment, defaults to https://app.verifyonce.com/api/verify
    "baseUrl":  "https://test-app.verifyonce.com/api/verify"
   },
 
@@ -45,7 +44,7 @@ Credentials should be stored in projects config file
 
 Initiating Verify Once transaction
 
-```cmd
+```TSX
 import { VerifyOnce } from "verify-once";
 
 ...
@@ -83,4 +82,7 @@ Running the example
 - `yarn build` to build the production version.
 - `yarn lint` to lint the codebase.
 - `yarn prettier` to run prettier.
-````
+
+```
+
+```
