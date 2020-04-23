@@ -395,10 +395,10 @@ export interface CallbackInfo {
 
 // initiation request data
 export interface InitiateRequest {
-  country: CountryCode;
-  firstName: string;
-  lastName: string;
-  email: string;
+  country?: CountryCode;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
 }
 
 // initiation request response data
