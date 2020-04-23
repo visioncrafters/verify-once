@@ -30,7 +30,7 @@ yarn add verify-once
 Credentials should be stored in projects config file.
 BaseUrl is optional param, for testing use dev or test prefix, defaults to https://app.verifyonce.com/api/verify
 
-```cmd
+```JSON
 ...
 
 "verifyOnce": {
@@ -44,7 +44,7 @@ BaseUrl is optional param, for testing use dev or test prefix, defaults to https
 
 Initiating Verify Once transaction
 
-```cmd
+```TSX
 import { VerifyOnce } from "verify-once";
 
 ...
