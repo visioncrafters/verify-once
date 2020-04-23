@@ -10,7 +10,7 @@ import * as path from "path";
 import generateUuid from "uuid/v4";
 
 import { version } from "../package.json";
-import { CallbackInfo, VerifyOnce } from "../src";
+import { CallbackInfo, CountryCode, VerifyOnce } from "../src";
 
 // notify of missing .env file
 if (!fs.existsSync(path.join(__dirname, ".env"))) {
@@ -30,6 +30,7 @@ export interface User {
   firstName: string;
   lastName: string;
   country: string;
+  email: string;
 }
 
 // represents verification attempt in our system
@@ -53,6 +54,7 @@ interface InitiateRequestParameters {
   lastName: string;
   country: string;
   dateOfBirth: string;
+  email: string;
 }
 
 // application configuration (parameters are read from the .env file)
@@ -62,20 +64,20 @@ const config = {
   ssl: {
     enabled: process.env.SSL_ENABLED === "true",
     cert: process.env.SSL_CERT || "",
-    key: process.env.SSL_KEY || ""
+    key: process.env.SSL_KEY || "",
   },
   verifyOnce: {
     baseUrl:
       process.env.API_BASE_URL || "https://test-app.verifyonce.com/api/verify",
     username: process.env.API_USERNAME || "",
-    password: process.env.API_PASSWORD || ""
-  }
+    password: process.env.API_PASSWORD || "",
+  },
 };
 
 // create simple in-memory database
 const database: Database = {
   users: [],
-  verifications: []
+  verifications: [],
 };
 
 // setup verify-once
@@ -108,6 +110,7 @@ const verifyOnce = new VerifyOnce(config.verifyOnce);
         <p><input id="firstName" name="firstName" value="John" /> <label for="firstName">First name</label></p>
         <p><input id="lastName" name="lastName" value="Rambo" /> <label for="lastName">Last name</label></p>
         <p><input id="country" name="country" value="EST" /> <label for="country">Country</label></p>
+        <p><input id="email" name="email" value="john@rambo.com" /> <label for="email">Email</label></p>
         <p>
           <button type="submit">Start verification</button>
         </p>
@@ -136,7 +139,8 @@ const verifyOnce = new VerifyOnce(config.verifyOnce);
     const {
       firstName,
       lastName,
-      country
+      country,
+      email,
     } = request.body as InitiateRequestParameters;
 
     // create new user (or load it, take from session etc)
@@ -144,13 +148,19 @@ const verifyOnce = new VerifyOnce(config.verifyOnce);
       id: generateUuid(),
       firstName,
       lastName,
-      country
+      country,
+      email,
     };
     database.users.push(user);
 
     // attempt to initiate verification
     try {
-      const initiateResponse = await verifyOnce.initiate();
+      const initiateResponse = await verifyOnce.initiate({
+        firstName,
+        lastName,
+        country: country as CountryCode,
+        email,
+      });
 
       // create new verification
       const verification: Verification = {
@@ -158,7 +168,7 @@ const verifyOnce = new VerifyOnce(config.verifyOnce);
         transactionId: initiateResponse.transactionId,
         url: initiateResponse.url,
         isCorrectUser: false,
-        info: null
+        info: null,
       };
       database.verifications.push(verification);
 
@@ -189,7 +199,7 @@ const verifyOnce = new VerifyOnce(config.verifyOnce);
 
       // find the verification from the database
       const verification = database.verifications.find(
-        item => item.transactionId === info.transaction.id
+        (item) => item.transactionId === info.transaction.id
       );
 
       // handle failure to find such transaction
@@ -207,7 +217,9 @@ const verifyOnce = new VerifyOnce(config.verifyOnce);
       }
 
       // find the local verification user
-      const user = database.users.find(item => item.id === verification.userId);
+      const user = database.users.find(
+        (item) => item.id === verification.userId
+      );
 
       // the user should exist at this point
       if (!user) {
@@ -229,7 +241,7 @@ const verifyOnce = new VerifyOnce(config.verifyOnce);
         body: request.body,
         info,
         verification,
-        user
+        user,
       });
 
       // what are the odds of successful response (used to test retry logic)
@@ -253,7 +265,7 @@ const verifyOnce = new VerifyOnce(config.verifyOnce);
     } catch (error) {
       console.log("received invalid callback", {
         body: request.body,
-        error
+        error,
       });
 
       response
@@ -267,7 +279,7 @@ const verifyOnce = new VerifyOnce(config.verifyOnce);
     ? https.createServer(
         {
           cert: fs.readFileSync(config.ssl.cert),
-          key: fs.readFileSync(config.ssl.key)
+          key: fs.readFileSync(config.ssl.key),
         },
         app
       )
@@ -292,7 +304,7 @@ const verifyOnce = new VerifyOnce(config.verifyOnce);
         .listen(80);
     }
   });
-})().catch(error => console.error(error));
+})().catch((error) => console.error(error));
 
 // returns whether verified user matches the correct (logged in) user
 function isCorrectUser(verification: CallbackInfo, user: User) {
