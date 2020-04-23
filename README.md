@@ -25,6 +25,48 @@ npm install verify-once
 yarn add verify-once
 ```
 
+## Usage
+
+Credentials should be stored in projects config file
+
+````cmd
+...
+
+"verifyOnce": {
+   "password": "integratorPassword",
+   "username": "integratorUserName",
+
+	// optional, for testing use dev or test environment, defaults to https://app.verifyonce.com/api/verify
+   "baseUrl":  "https://test-app.verifyonce.com/api/verify"
+  },
+
+...
+```
+
+Initiating Verify Once transaction
+
+```cmd
+import { VerifyOnce } from "verify-once";
+
+...
+
+// all optional, are used for autofill
+const userData : InitiateRequest = {
+	country: CountryCode.BLR,
+	firstName: "John",
+	lastName: "Wick",
+	email: "john@wick.com",
+}
+
+// initiate verification
+const verifyOnce = new VerifyOnce(config.verifyOnce);
+
+// passing userData object is optional
+const verifyOnceInitiateResponse : InitiateResponse = await verifyOnce.initiate(userData);
+
+...
+```
+
 ## Example
 
 The example is located in the `/example` directory.
@@ -41,3 +83,4 @@ Running the example
 - `yarn build` to build the production version.
 - `yarn lint` to lint the codebase.
 - `yarn prettier` to run prettier.
+````
