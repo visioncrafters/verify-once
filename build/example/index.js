@@ -75,18 +75,18 @@ var config = {
     ssl: {
         enabled: process.env.SSL_ENABLED === "true",
         cert: process.env.SSL_CERT || "",
-        key: process.env.SSL_KEY || ""
+        key: process.env.SSL_KEY || "",
     },
     verifyOnce: {
         baseUrl: process.env.API_BASE_URL || "https://test-app.verifyonce.com/api/verify",
         username: process.env.API_USERNAME || "",
-        password: process.env.API_PASSWORD || ""
-    }
+        password: process.env.API_PASSWORD || "",
+    },
 };
 // create simple in-memory database
 var database = {
     users: [],
-    verifications: []
+    verifications: [],
 };
 // setup verify-once
 var verifyOnce = new src_1.VerifyOnce(config.verifyOnce);
@@ -102,26 +102,32 @@ var verifyOnce = new src_1.VerifyOnce(config.verifyOnce);
         app.use(body_parser_1.default.text());
         // handle index page request
         app.get("/", function (_request, response, _next) {
-            response.send(html_literal_1.default(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n      <p>\n        <h1>VerifyOnce Integration Example</h1>\n      </p>\n\n      <form method=\"post\" action=\"/initiate\">\n        <p>\n          <h2>User info</h2>\n        </p>\n        <p>\n          This is the information that the integrating system already knows and uses to compare against the information received from VerifyOnce.\n        </p>\n        <p><input id=\"firstName\" name=\"firstName\" value=\"John\" /> <label for=\"firstName\">First name</label></p>\n        <p><input id=\"lastName\" name=\"lastName\" value=\"Rambo\" /> <label for=\"lastName\">Last name</label></p>\n        <p><input id=\"country\" name=\"country\" value=\"EST\" /> <label for=\"country\">Country</label></p>\n        <p>\n          <button type=\"submit\">Start verification</button>\n        </p>\n      </form>\n\n      <p>\n        <h2>State</h2>\n      </p>\n      <p>\n        This is the information that the integrator knows internally and that it has received from VerifyOnce.\n      </p>\n      <p>\n        Integrator should use this information to decide whether the user can be considered verified or not.\n      </p>\n      <p>", "</p>\n\n      <p>\n        <em>Version: ", "</em>\n      </p>\n    "], ["\n      <p>\n        <h1>VerifyOnce Integration Example</h1>\n      </p>\n\n      <form method=\"post\" action=\"/initiate\">\n        <p>\n          <h2>User info</h2>\n        </p>\n        <p>\n          This is the information that the integrating system already knows and uses to compare against the information received from VerifyOnce.\n        </p>\n        <p><input id=\"firstName\" name=\"firstName\" value=\"John\" /> <label for=\"firstName\">First name</label></p>\n        <p><input id=\"lastName\" name=\"lastName\" value=\"Rambo\" /> <label for=\"lastName\">Last name</label></p>\n        <p><input id=\"country\" name=\"country\" value=\"EST\" /> <label for=\"country\">Country</label></p>\n        <p>\n          <button type=\"submit\">Start verification</button>\n        </p>\n      </form>\n\n      <p>\n        <h2>State</h2>\n      </p>\n      <p>\n        This is the information that the integrator knows internally and that it has received from VerifyOnce.\n      </p>\n      <p>\n        Integrator should use this information to decide whether the user can be considered verified or not.\n      </p>\n      <p>", "</p>\n\n      <p>\n        <em>Version: ", "</em>\n      </p>\n    "])), debug({ database: database }), package_json_1.version));
+            response.send(html_literal_1.default(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n      <p>\n        <h1>VerifyOnce Integration Example</h1>\n      </p>\n\n      <form method=\"post\" action=\"/initiate\">\n        <p>\n          <h2>User info</h2>\n        </p>\n        <p>\n          This is the information that the integrating system already knows and uses to compare against the information received from VerifyOnce.\n        </p>\n        <p><input id=\"firstName\" name=\"firstName\" value=\"John\" /> <label for=\"firstName\">First name</label></p>\n        <p><input id=\"lastName\" name=\"lastName\" value=\"Rambo\" /> <label for=\"lastName\">Last name</label></p>\n        <p><input id=\"country\" name=\"country\" value=\"EST\" /> <label for=\"country\">Country</label></p>\n        <p><input id=\"email\" name=\"email\" value=\"john@rambo.com\" /> <label for=\"email\">Email</label></p>\n        <p>\n          <button type=\"submit\">Start verification</button>\n        </p>\n      </form>\n\n      <p>\n        <h2>State</h2>\n      </p>\n      <p>\n        This is the information that the integrator knows internally and that it has received from VerifyOnce.\n      </p>\n      <p>\n        Integrator should use this information to decide whether the user can be considered verified or not.\n      </p>\n      <p>", "</p>\n\n      <p>\n        <em>Version: ", "</em>\n      </p>\n    "], ["\n      <p>\n        <h1>VerifyOnce Integration Example</h1>\n      </p>\n\n      <form method=\"post\" action=\"/initiate\">\n        <p>\n          <h2>User info</h2>\n        </p>\n        <p>\n          This is the information that the integrating system already knows and uses to compare against the information received from VerifyOnce.\n        </p>\n        <p><input id=\"firstName\" name=\"firstName\" value=\"John\" /> <label for=\"firstName\">First name</label></p>\n        <p><input id=\"lastName\" name=\"lastName\" value=\"Rambo\" /> <label for=\"lastName\">Last name</label></p>\n        <p><input id=\"country\" name=\"country\" value=\"EST\" /> <label for=\"country\">Country</label></p>\n        <p><input id=\"email\" name=\"email\" value=\"john@rambo.com\" /> <label for=\"email\">Email</label></p>\n        <p>\n          <button type=\"submit\">Start verification</button>\n        </p>\n      </form>\n\n      <p>\n        <h2>State</h2>\n      </p>\n      <p>\n        This is the information that the integrator knows internally and that it has received from VerifyOnce.\n      </p>\n      <p>\n        Integrator should use this information to decide whether the user can be considered verified or not.\n      </p>\n      <p>", "</p>\n\n      <p>\n        <em>Version: ", "</em>\n      </p>\n    "])), debug({ database: database }), package_json_1.version));
         });
         // handle initiation request (index page form posts to this)
         app.post("/initiate", function (request, response, next) { return __awaiter(_this, void 0, void 0, function () {
-            var _a, firstName, lastName, country, user, initiateResponse, verification, err_1, error;
+            var _a, firstName, lastName, country, email, user, initiateResponse, verification, err_1, error;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = request.body, firstName = _a.firstName, lastName = _a.lastName, country = _a.country;
+                        _a = request.body, firstName = _a.firstName, lastName = _a.lastName, country = _a.country, email = _a.email;
                         user = {
                             id: v4_1.default(),
                             firstName: firstName,
                             lastName: lastName,
-                            country: country
+                            country: country,
+                            email: email,
                         };
                         database.users.push(user);
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, verifyOnce.initiate()];
+                        return [4 /*yield*/, verifyOnce.initiate({
+                                firstName: firstName,
+                                lastName: lastName,
+                                country: country,
+                                email: email,
+                            })];
                     case 2:
                         initiateResponse = _b.sent();
                         verification = {
@@ -129,7 +135,7 @@ var verifyOnce = new src_1.VerifyOnce(config.verifyOnce);
                             transactionId: initiateResponse.transactionId,
                             url: initiateResponse.url,
                             isCorrectUser: false,
-                            info: null
+                            info: null,
                         };
                         database.verifications.push(verification);
                         // redirect to the verification page
@@ -179,7 +185,7 @@ var verifyOnce = new src_1.VerifyOnce(config.verifyOnce);
                         body: request.body,
                         info: info_1,
                         verification: verification_1,
-                        user: user
+                        user: user,
                     });
                     successOdds = 1 / 2;
                     maxSimulatedLatency = 2000;
@@ -199,7 +205,7 @@ var verifyOnce = new src_1.VerifyOnce(config.verifyOnce);
                 catch (error) {
                     console.log("received invalid callback", {
                         body: request.body,
-                        error: error
+                        error: error,
                     });
                     response
                         .status(400)
@@ -211,7 +217,7 @@ var verifyOnce = new src_1.VerifyOnce(config.verifyOnce);
         server = config.ssl.enabled
             ? https.createServer({
                 cert: fs.readFileSync(config.ssl.cert),
-                key: fs.readFileSync(config.ssl.key)
+                key: fs.readFileSync(config.ssl.key),
             }, app)
             : http.createServer(app);
         // start the server
