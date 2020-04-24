@@ -371,6 +371,12 @@ export interface CallbackInfo {
     identityVerification: IdentityCallbackInfo | null;
     addressVerification: AddressCallbackInfo | null;
 }
+export interface InitiateRequest {
+    country?: CountryCode;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+}
 export interface InitiateResponse {
     transactionId: string;
     url: string;
@@ -384,6 +390,6 @@ export declare class VerifyOnce {
     private readonly api;
     private readonly options;
     constructor(options: VerifyOnceOptions);
-    initiate(): Promise<InitiateResponse>;
+    initiate(data?: InitiateRequest): Promise<InitiateResponse>;
     verifyCallbackInfo(body: string): CallbackInfo;
 }
