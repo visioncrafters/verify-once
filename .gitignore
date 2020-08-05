@@ -13,6 +13,9 @@ yarn-error.log
 # yarn Integrity file
 .yarn-integrity
 
+# jetbrains files
+.idea
+
 # vscode files
 .vscode/*
 !.vscode/settings.json
