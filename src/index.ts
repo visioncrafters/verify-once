@@ -9,6 +9,10 @@ export enum VerificationStatus {
   VERIFIED = "VERIFIED",
   FAILED = "FAILED",
   LOCKED = "LOCKED",
+  DOCUMENT_EXPIRING_VERIFIED = "DOCUMENT_EXPIRING_VERIFIED",
+  DOCUMENT_EXPIRED_REJECTED = "DOCUMENT_EXPIRED_REJECTED",
+  VERIFICATION_EXPIRING_VERIFIED = "VERIFICATION_EXPIRING_VERIFIED",
+  VERIFICATION_EXPIRED_REJECTED = "VERIFICATION_EXPIRED_REJECTED"
 }
 
 // identity document types
@@ -52,7 +56,7 @@ export enum IdentityIdType {
   CREDIT_CARD_STATEMENT = "CREDIT_CARD_STATEMENT",
   PROFESSIONAL_IDENTIFICATION_CARD = "PROFESSIONAL_IDENTIFICATION_CARD",
   SOCIAL_SECURITY_CARD = "SOCIAL_SECURITY_CARD",
-  POSTAL_IDENTITY_CARD = "POSTAL_IDENTITY_CARD",
+  POSTAL_IDENTITY_CARD = "POSTAL_IDENTITY_CARD"
 }
 
 // identity rejection reasons
@@ -66,7 +70,7 @@ export enum IdentityRejectReason {
   ID_COMPROMISED = "ID_COMPROMISED",
   SELFIE_MISMATCH = "SELFIE_MISMATCH",
   SELFIE_INSUFFICIENT_QUALITY = "SELFIE_INSUFFICIENT_QUALITY",
-  UNKNOWN = "UNKNOWN",
+  UNKNOWN = "UNKNOWN"
 }
 
 // supported ISO 3166-1 alpha-3 country code list
@@ -320,7 +324,7 @@ export enum CountryCode {
   XKX = "XKX",
   YEM = "YEM",
   ZMB = "ZMB",
-  ZWE = "ZWE",
+  ZWE = "ZWE"
 }
 
 // identity verification info callback
@@ -372,7 +376,7 @@ export interface Transaction {
 // possible user status
 export enum UserStatus {
   ACTIVE = "ACTIVE",
-  BLOCKED = "BLOCKED",
+  BLOCKED = "BLOCKED"
 }
 
 export interface User {
@@ -421,15 +425,15 @@ export class VerifyOnce {
   constructor(options: VerifyOnceOptions) {
     this.options = {
       baseUrl: "https://app.verifyonce.com/api/verify",
-      ...options,
+      ...options
     };
 
     this.api = axios.create({
       baseURL: this.options.baseUrl,
       auth: {
         username: this.options.username,
-        password: this.options.password,
-      },
+        password: this.options.password
+      }
     });
   }
 
