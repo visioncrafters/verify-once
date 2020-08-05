@@ -60,6 +60,10 @@ var VerificationStatus;
     VerificationStatus["VERIFIED"] = "VERIFIED";
     VerificationStatus["FAILED"] = "FAILED";
     VerificationStatus["LOCKED"] = "LOCKED";
+    VerificationStatus["DOCUMENT_EXPIRING_VERIFIED"] = "DOCUMENT_EXPIRING_VERIFIED";
+    VerificationStatus["DOCUMENT_EXPIRED_REJECTED"] = "DOCUMENT_EXPIRED_REJECTED";
+    VerificationStatus["VERIFICATION_EXPIRING_VERIFIED"] = "VERIFICATION_EXPIRING_VERIFIED";
+    VerificationStatus["VERIFICATION_EXPIRED_REJECTED"] = "VERIFICATION_EXPIRED_REJECTED";
 })(VerificationStatus = exports.VerificationStatus || (exports.VerificationStatus = {}));
 // identity document types
 var IdentityIdType;
@@ -386,8 +390,8 @@ var VerifyOnce = /** @class */ (function () {
             baseURL: this.options.baseUrl,
             auth: {
                 username: this.options.username,
-                password: this.options.password,
-            },
+                password: this.options.password
+            }
         });
     }
     VerifyOnce.prototype.initiate = function (data) {
