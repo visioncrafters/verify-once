@@ -1,6 +1,6 @@
 {
   "name": "verify-once",
-  "version": "1.24.0-beta.1",
+  "version": "1.24.0-beta.2",
   "description": "VerifyOnce integration library and example",
   "main": "build/src/index.js",
   "types": "build/src/index.d.ts",

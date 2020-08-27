@@ -544,6 +544,7 @@ export interface IdentityCallbackInfo {
     callbackDate: string | null;
     createdDate: string | null;
     updatedDate: string | null;
+    verificationExpiry: string | null;
 }
 export interface AddressCallbackInfo {
     id: string;
