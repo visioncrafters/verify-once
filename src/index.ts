@@ -557,6 +557,7 @@ export interface IdentityCallbackInfo {
   callbackDate: string | null;
   createdDate: string | null;
   updatedDate: string | null;
+  verificationExpiry: string | null;
 }
 
 // address verification info callback
