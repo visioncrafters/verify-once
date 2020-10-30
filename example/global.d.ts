@@ -1,11 +1,7 @@
-import { User } from "../example";
-
-// extend express session with custom properties
-declare global {
+declare module express {
   namespace Express {
     interface Session {
-      // logged in user
-      user: User | null;
+      userId?: string;
     }
   }
 }

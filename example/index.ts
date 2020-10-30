@@ -2,12 +2,14 @@ import { AxiosError } from "axios";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import express from "express";
+import { Request, RequestHandler } from "express-serve-static-core";
+import session from "express-session";
 import * as fs from "fs";
 import html from "html-literal";
 import * as http from "http";
 import * as https from "https";
 import * as path from "path";
-import generateUuid from "uuid/v4";
+import { v4 as generateUuid } from "uuid";
 
 import { version } from "../package.json";
 import { CallbackInfo, CountryCode, VerifyOnce } from "../src";
@@ -80,6 +82,17 @@ const database: Database = {
   verifications: [],
 };
 
+function query(request: Request) {
+  const userId = request.session ? request.session.userId : undefined;
+
+  return {
+    user: database.users.find((user) => user.id === userId),
+    verification: database.verifications.find(
+      (verification) => verification.userId === userId
+    ),
+  };
+}
+
 // setup verify-once
 const verifyOnce = new VerifyOnce(config.verifyOnce);
 
@@ -88,13 +101,30 @@ const verifyOnce = new VerifyOnce(config.verifyOnce);
   // create express app
   const app = express();
 
+  app.use(
+    session({
+      secret: process.env.SESSION_SECRET || "",
+      resave: false,
+      saveUninitialized: false,
+    }) as RequestHandler
+  );
+
   // setup body parser middleware to support form, json and plain text payloads
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
   app.use(bodyParser.text());
 
   // handle index page request
-  app.get("/", (_request, response, _next) => {
+  app.get("/", (request, response, _next) => {
+    const { user, verification } = query(request);
+
+    const userData = {
+      firstName: user?.firstName || "John",
+      lastName: user?.lastName || "Rambo",
+      country: user?.country || "EST",
+      email: user?.email || "john@rambo.com",
+    };
+
     response.send(html`
       <p>
         <h1>VerifyOnce Integration Example</h1>
@@ -107,10 +137,18 @@ const verifyOnce = new VerifyOnce(config.verifyOnce);
         <p>
           This is the information that the integrating system already knows and uses to compare against the information received from VerifyOnce.
         </p>
-        <p><input id="firstName" name="firstName" value="John" /> <label for="firstName">First name</label></p>
-        <p><input id="lastName" name="lastName" value="Rambo" /> <label for="lastName">Last name</label></p>
-        <p><input id="country" name="country" value="EST" /> <label for="country">Country</label></p>
-        <p><input id="email" name="email" value="john@rambo.com" /> <label for="email">Email</label></p>
+        <p><input id="firstName" name="firstName" value="${
+          userData.firstName
+        }" /> <label for="firstName">First name</label></p>
+        <p><input id="lastName" name="lastName" value="${
+          userData.lastName
+        }" /> <label for="lastName">Last name</label></p>
+        <p><input id="country" name="country" value="${
+          userData.country
+        }" /> <label for="country">Country</label></p>
+        <p><input id="email" name="email" value="${
+          userData.email
+        }" /> <label for="email">Email</label></p>
         <p>
           <button type="submit">Start verification</button>
         </p>
@@ -125,7 +163,7 @@ const verifyOnce = new VerifyOnce(config.verifyOnce);
       <p>
         Integrator should use this information to decide whether the user can be considered verified or not.
       </p>
-      <p>${debug({ database })}</p>
+      <p>${debug({ database: { user, verification } })}</p>
 
       <p>
         <em>Version: ${version}</em>
@@ -135,6 +173,14 @@ const verifyOnce = new VerifyOnce(config.verifyOnce);
 
   // handle initiation request (index page form posts to this)
   app.post("/initiate", async (request, response, next) => {
+    const { verification } = query(request);
+
+    if (verification) {
+      response.redirect(verification.url);
+
+      return;
+    }
+
     // extract initiation parameters
     const {
       firstName,
@@ -143,7 +189,7 @@ const verifyOnce = new VerifyOnce(config.verifyOnce);
       email,
     } = request.body as InitiateRequestParameters;
 
-    // create new user (or load it, take from session etc)
+    // create new user
     const user: User = {
       id: generateUuid(),
       firstName,
@@ -171,6 +217,10 @@ const verifyOnce = new VerifyOnce(config.verifyOnce);
         info: null,
       };
       database.verifications.push(verification);
+
+      if (request.session) {
+        request.session.userId = user.id;
+      }
 
       // redirect to the verification page
       response.redirect(initiateResponse.url);
@@ -208,9 +258,7 @@ const verifyOnce = new VerifyOnce(config.verifyOnce);
         response
           .status(404)
           .send(
-            `Verification with transaction id "${
-              info.transaction.id
-            }" could not be found`
+            `Verification with transaction id "${info.transaction.id}" could not be found`
           );
 
         return;
@@ -224,9 +272,7 @@ const verifyOnce = new VerifyOnce(config.verifyOnce);
       // the user should exist at this point
       if (!user) {
         throw new Error(
-          `Verification user with id "${
-            verification.userId
-          }" not found, this should not happen`
+          `Verification user with id "${verification.userId}" not found, this should not happen`
         );
       }
 
@@ -339,7 +385,5 @@ function isCorrectUser(verification: CallbackInfo, user: User) {
 
 // debugging helper, renders data as formatted json
 function debug(data: any): string {
-  return html`
-    <pre>${JSON.stringify(data, null, "  ")}</pre>
-  `;
+  return html` <pre>${JSON.stringify(data, null, "  ")}</pre> `;
 }
