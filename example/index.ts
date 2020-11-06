@@ -55,7 +55,6 @@ interface InitiateRequestParameters {
   firstName: string;
   lastName: string;
   country: string;
-  dateOfBirth: string;
   email: string;
 }
 
@@ -145,7 +144,7 @@ const verifyOnce = new VerifyOnce(config.verifyOnce);
         }" /> <label for="lastName">Last name</label></p>
         <p><input id="country" name="country" value="${
           userData.country
-        }" /> <label for="country">Country</label></p>
+        }" minlength="3" maxlength="3" /> <label for="country">Country code (3 letters)</label></p>
         <p><input id="email" name="email" value="${
           userData.email
         }" /> <label for="email">Email</label></p>
@@ -228,12 +227,24 @@ const verifyOnce = new VerifyOnce(config.verifyOnce);
       const error = err as AxiosError;
 
       // handle authentication error
-      if (error.response && error.response.status === 401) {
-        response.send(
-          "Authentication failed, check integrator username and password"
-        );
+      if (error.response) {
+        const { status, data } = error.response;
 
-        return;
+        console.log("VerifyOnce request failed", { status, data });
+
+        if (status === 400) {
+          response.send(`Invalid input: ${data.errorMessage}`);
+
+          return;
+        }
+
+        if (status === 401) {
+          response.send(
+            "Authentication failed, check integrator username and password"
+          );
+
+          return;
+        }
       }
 
       // let express handle other errors
