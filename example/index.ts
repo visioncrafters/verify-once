@@ -26,6 +26,12 @@ if (!fs.existsSync(path.join(__dirname, ".env"))) {
 // load configuration from .env file
 dotenv.config({ path: path.join(__dirname, ".env") });
 
+declare module "express-session" {
+  interface SessionData {
+    userId: string;
+  }
+}
+
 // represents a user in our system
 export interface User {
   id: string;
@@ -343,13 +349,7 @@ const verifyOnce = new VerifyOnce(config.verifyOnce);
     : http.createServer(app);
 
   // start the server
-  server.listen(config.port, (error: Error | undefined) => {
-    if (error) {
-      console.error(error);
-
-      return;
-    }
-
+  server.listen(config.port, () => {
     console.log(`Example integration server started on port ${config.port}`);
 
     // also start a server on http to redirect to https if SSL is enabled

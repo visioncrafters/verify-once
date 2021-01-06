@@ -16,7 +16,7 @@
     "prettier": "prettier --write src/**/*.ts"
   },
   "dependencies": {
-    "axios": "^0.21.0",
+    "axios": "^0.21.1",
     "jsonwebtoken": "^8.5.1"
   },
   "devDependencies": {
