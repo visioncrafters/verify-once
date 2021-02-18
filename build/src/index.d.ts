@@ -311,7 +311,7 @@ export declare enum CountryCode {
     VIR = "VIR",
     WLF = "WLF",
     ESH = "ESH",
-    XKX = "XKX",
+    RKS = "RKS",
     YEM = "YEM",
     ZMB = "ZMB",
     ZWE = "ZWE"

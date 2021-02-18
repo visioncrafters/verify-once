@@ -374,7 +374,7 @@ var CountryCode;
     CountryCode["VIR"] = "VIR";
     CountryCode["WLF"] = "WLF";
     CountryCode["ESH"] = "ESH";
-    CountryCode["XKX"] = "XKX";
+    CountryCode["RKS"] = "RKS";
     CountryCode["YEM"] = "YEM";
     CountryCode["ZMB"] = "ZMB";
     CountryCode["ZWE"] = "ZWE";
@@ -602,8 +602,8 @@ var VerifyOnce = /** @class */ (function () {
             baseURL: this.options.baseUrl,
             auth: {
                 username: this.options.username,
-                password: this.options.password
-            }
+                password: this.options.password,
+            },
         });
     }
     VerifyOnce.prototype.initiate = function (data) {
