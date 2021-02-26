@@ -114,16 +114,23 @@ var IdentityIdType;
 // identity rejection reasons
 var IdentityRejectReason;
 (function (IdentityRejectReason) {
-    IdentityRejectReason["ID_INVALID_DATA"] = "ID_INVALID_DATA";
-    IdentityRejectReason["ID_UNSUPPORTED"] = "ID_UNSUPPORTED";
-    IdentityRejectReason["ID_INSUFFICIENT_QUALITY"] = "ID_INSUFFICIENT_QUALITY";
-    IdentityRejectReason["ID_EXPIRED"] = "ID_EXPIRED";
-    IdentityRejectReason["ID_UNDERAGE"] = "ID_UNDERAGE";
-    IdentityRejectReason["ID_DATA_MISMATCH"] = "ID_DATA_MISMATCH";
+    // document errors
     IdentityRejectReason["ID_COMPROMISED"] = "ID_COMPROMISED";
-    IdentityRejectReason["SELFIE_MISMATCH"] = "SELFIE_MISMATCH";
+    IdentityRejectReason["ID_EXPIRED"] = "ID_EXPIRED";
+    IdentityRejectReason["ID_INSUFFICIENT_QUALITY"] = "ID_INSUFFICIENT_QUALITY";
+    IdentityRejectReason["ID_NOT_COLOUR_PICTURE"] = "ID_NOT_COLOUR_PICTURE";
+    IdentityRejectReason["ID_ORIGINAL_DOCUMENT_NOT_PRESENT"] = "ID_ORIGINAL_DOCUMENT_NOT_PRESENT";
+    IdentityRejectReason["ID_SUSPECTED_FRAUD"] = "ID_SUSPECTED_FRAUD";
+    IdentityRejectReason["ID_UNDERAGE"] = "ID_UNDERAGE";
+    IdentityRejectReason["ID_UNSUPPORTED"] = "ID_UNSUPPORTED";
+    // selfie errors
     IdentityRejectReason["SELFIE_INSUFFICIENT_QUALITY"] = "SELFIE_INSUFFICIENT_QUALITY";
+    IdentityRejectReason["SELFIE_MISMATCH"] = "SELFIE_MISMATCH";
+    // unknown errors
     IdentityRejectReason["UNKNOWN"] = "UNKNOWN";
+    // Legacy
+    IdentityRejectReason["ID_DATA_MISMATCH"] = "ID_DATA_MISMATCH";
+    IdentityRejectReason["ID_INVALID_DATA"] = "ID_INVALID_DATA";
 })(IdentityRejectReason = exports.IdentityRejectReason || (exports.IdentityRejectReason = {}));
 // supported ISO 3166-1 alpha-3 country code list
 var CountryCode;

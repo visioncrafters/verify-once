@@ -1,4 +1,4 @@
-## v1.25.0
+## v1.26.0
 
 - Added new identity reject reasons:
   - ID_NOT_COLOUR_PICTURE
