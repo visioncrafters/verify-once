@@ -6,10 +6,9 @@ declare module "express-session" {
 }
 export interface User {
     id: string;
-    firstName: string;
-    lastName: string;
     country: string;
     email: string;
+    username: string;
 }
 export interface Verification {
     userId: string;

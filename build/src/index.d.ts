@@ -575,6 +575,7 @@ export interface Transaction {
     id: string;
     integratorId: string;
     userId: string;
+    integratorUserIdentifier: string | null;
     createdDate: string;
     updatedDate: string;
 }
@@ -600,9 +601,12 @@ export interface CallbackInfo {
 }
 export interface InitiateRequest {
     country?: CountryCode;
-    firstName?: string;
-    lastName?: string;
     email?: string;
+    userIdentifier?: string;
+    /** @deprecated */
+    firstName?: string;
+    /** @deprecated */
+    lastName?: string;
 }
 export interface InitiateResponse {
     transactionId: string;

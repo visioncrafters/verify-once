@@ -128,20 +128,16 @@ var verifyOnce = new src_1.VerifyOnce(config.verifyOnce);
         app.get("/", function (request, response, _next) {
             var _a = query(request), user = _a.user, verification = _a.verification;
             var userData = {
-                firstName: (user === null || user === void 0 ? void 0 : user.firstName) || "John",
-                lastName: (user === null || user === void 0 ? void 0 : user.lastName) || "Rambo",
                 country: (user === null || user === void 0 ? void 0 : user.country) || "EST",
                 email: (user === null || user === void 0 ? void 0 : user.email) || "john@rambo.com",
+                username: (user === null || user === void 0 ? void 0 : user.username) || "john123",
             };
-            response.send(html_literal_1.default(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n      <p>\n        <h1>VerifyOnce Integration Example</h1>\n      </p>\n\n      <form method=\"post\" action=\"/initiate\">\n        <p>\n          <h2>User info</h2>\n        </p>\n        <p>\n          This is the information that the integrating system already knows and uses to compare against the information received from VerifyOnce.\n        </p>\n        <p><input id=\"firstName\" name=\"firstName\" value=\"", "\" /> <label for=\"firstName\">First name</label></p>\n        <p><input id=\"lastName\" name=\"lastName\" value=\"", "\" /> <label for=\"lastName\">Last name</label></p>\n        <p><input id=\"country\" name=\"country\" value=\"", "\" minlength=\"3\" maxlength=\"3\" /> <label for=\"country\">Country code (3 letters)</label></p>\n        <p><input id=\"email\" name=\"email\" value=\"", "\" /> <label for=\"email\">Email</label></p>\n        <p>\n          <button type=\"submit\">Start verification</button>\n        </p>\n      </form>\n\n      <p>\n        <h2>State</h2>\n      </p>\n      <p>\n        This is the information that the integrator knows internally and that it has received from VerifyOnce.\n      </p>\n      <p>\n        Integrator should use this information to decide whether the user can be considered verified or not.\n      </p>\n      <p>", "</p>\n\n      <p>\n        <em>Version: ", "</em>\n      </p>\n    "], ["\n      <p>\n        <h1>VerifyOnce Integration Example</h1>\n      </p>\n\n      <form method=\"post\" action=\"/initiate\">\n        <p>\n          <h2>User info</h2>\n        </p>\n        <p>\n          This is the information that the integrating system already knows and uses to compare against the information received from VerifyOnce.\n        </p>\n        <p><input id=\"firstName\" name=\"firstName\" value=\"",
-                "\" /> <label for=\"firstName\">First name</label></p>\n        <p><input id=\"lastName\" name=\"lastName\" value=\"",
-                "\" /> <label for=\"lastName\">Last name</label></p>\n        <p><input id=\"country\" name=\"country\" value=\"",
-                "\" minlength=\"3\" maxlength=\"3\" /> <label for=\"country\">Country code (3 letters)</label></p>\n        <p><input id=\"email\" name=\"email\" value=\"",
-                "\" /> <label for=\"email\">Email</label></p>\n        <p>\n          <button type=\"submit\">Start verification</button>\n        </p>\n      </form>\n\n      <p>\n        <h2>State</h2>\n      </p>\n      <p>\n        This is the information that the integrator knows internally and that it has received from VerifyOnce.\n      </p>\n      <p>\n        Integrator should use this information to decide whether the user can be considered verified or not.\n      </p>\n      <p>", "</p>\n\n      <p>\n        <em>Version: ", "</em>\n      </p>\n    "])), userData.firstName, userData.lastName, userData.country, userData.email, debug({ database: { user: user, verification: verification } }), package_json_1.version));
+            response.send(html_literal_1.default(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n      <p>\n        <h1>VerifyOnce Integration Example</h1>\n      </p>\n\n      <form method=\"post\" action=\"/initiate\">\n        <p>\n          <h2>User info</h2>\n        </p>\n        <p>\n          This is the information that the integrating system already knows and uses to compare against the information received from VerifyOnce.\n        </p>\n        <p>\n          <input id=\"country\" name=\"country\" value=\"", "\" minlength=\"3\" maxlength=\"3\" />\n          <label for=\"country\">Country code (3 letters)</label>\n        </p>\n        <p>\n          <input id=\"email\" name=\"email\" value=\"", "\" />\n          <label for=\"email\">Email</label>\n        </p>\n        <p>\n          <input id=\"username\" name=\"username\" value=\"", "\" />\n          <label for=\"username\">Username</label>\n        </p>\n        <p>\n          <button type=\"submit\">Start verification</button>\n        </p>\n      </form>\n\n      <p>\n        <h2>State</h2>\n      </p>\n      <p>\n        This is the information that the integrator knows internally and that it has received from VerifyOnce.\n      </p>\n      <p>\n        Integrator should use this information to decide whether the user can be considered verified or not.\n      </p>\n      <p>", "</p>\n\n      <p>\n        <em>Version: ", "</em>\n      </p>\n    "], ["\n      <p>\n        <h1>VerifyOnce Integration Example</h1>\n      </p>\n\n      <form method=\"post\" action=\"/initiate\">\n        <p>\n          <h2>User info</h2>\n        </p>\n        <p>\n          This is the information that the integrating system already knows and uses to compare against the information received from VerifyOnce.\n        </p>\n        <p>\n          <input id=\"country\" name=\"country\" value=\"",
+                "\" minlength=\"3\" maxlength=\"3\" />\n          <label for=\"country\">Country code (3 letters)</label>\n        </p>\n        <p>\n          <input id=\"email\" name=\"email\" value=\"", "\" />\n          <label for=\"email\">Email</label>\n        </p>\n        <p>\n          <input id=\"username\" name=\"username\" value=\"", "\" />\n          <label for=\"username\">Username</label>\n        </p>\n        <p>\n          <button type=\"submit\">Start verification</button>\n        </p>\n      </form>\n\n      <p>\n        <h2>State</h2>\n      </p>\n      <p>\n        This is the information that the integrator knows internally and that it has received from VerifyOnce.\n      </p>\n      <p>\n        Integrator should use this information to decide whether the user can be considered verified or not.\n      </p>\n      <p>", "</p>\n\n      <p>\n        <em>Version: ", "</em>\n      </p>\n    "])), userData.country, userData.email, userData.username, debug({ database: { user: user, verification: verification } }), package_json_1.version));
         });
         // handle initiation request (index page form posts to this)
         app.post("/initiate", function (request, response, next) { return __awaiter(void 0, void 0, void 0, function () {
-            var verification, _a, firstName, lastName, country, email, user, initiateResponse, verification_1, err_1, error, _b, status_1, data;
+            var verification, _a, country, email, username, user, initiateResponse, verification_1, err_1, error, _b, status_1, data;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -150,23 +146,21 @@ var verifyOnce = new src_1.VerifyOnce(config.verifyOnce);
                             response.redirect(verification.url);
                             return [2 /*return*/];
                         }
-                        _a = request.body, firstName = _a.firstName, lastName = _a.lastName, country = _a.country, email = _a.email;
+                        _a = request.body, country = _a.country, email = _a.email, username = _a.username;
                         user = {
                             id: uuid_1.v4(),
-                            firstName: firstName,
-                            lastName: lastName,
                             country: country,
                             email: email,
+                            username: username,
                         };
                         database.users.push(user);
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, , 4]);
                         return [4 /*yield*/, verifyOnce.initiate({
-                                firstName: firstName,
-                                lastName: lastName,
                                 country: country,
                                 email: email,
+                                userIdentifier: username,
                             })];
                     case 2:
                         initiateResponse = _c.sent();
@@ -292,21 +286,21 @@ function isCorrectUser(verification, user) {
     if (verification.identityVerification === null) {
         return false;
     }
-    // require first name to match (case-insensitive)
+    // require first name to be present
     if (verification.identityVerification.idFirstName === null ||
-        verification.identityVerification.idFirstName === "N/A" ||
-        user.firstName.toLowerCase() !==
-            verification.identityVerification.idFirstName.toLowerCase()) {
+        verification.identityVerification.idFirstName === "N/A") {
         return false;
     }
-    // require last name to match (case-insensitive)
+    // require last name to be present
     if (verification.identityVerification.idLastName === null ||
-        verification.identityVerification.idLastName === "N/A" ||
-        user.lastName.toLowerCase() !==
-            verification.identityVerification.idLastName.toLowerCase()) {
+        verification.identityVerification.idLastName === "N/A") {
         return false;
     }
-    // name matches, all good (integrator could choose to verify additional known info such as date of birth etc)
+    // require username to match
+    if (verification.transaction.integratorUserIdentifier !== user.username) {
+        return false;
+    }
+    // name present, all good (integrator could choose to verify additional known info such as date of birth etc)
     return true;
 }
 // debugging helper, renders data as formatted json
