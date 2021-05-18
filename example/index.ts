@@ -35,10 +35,9 @@ declare module "express-session" {
 // represents a user in our system
 export interface User {
   id: string;
-  firstName: string;
-  lastName: string;
   country: string;
   email: string;
+  username: string;
 }
 
 // represents verification attempt in our system
@@ -58,10 +57,9 @@ interface Database {
 
 // initiation request parameters
 interface InitiateRequestParameters {
-  firstName: string;
-  lastName: string;
   country: string;
   email: string;
+  username: string;
 }
 
 // application configuration (parameters are read from the .env file)
@@ -124,10 +122,9 @@ const verifyOnce = new VerifyOnce(config.verifyOnce);
     const { user, verification } = query(request);
 
     const userData = {
-      firstName: user?.firstName || "John",
-      lastName: user?.lastName || "Rambo",
       country: user?.country || "EST",
       email: user?.email || "john@rambo.com",
+      username: user?.username || "john123",
     };
 
     response.send(html`
@@ -142,18 +139,20 @@ const verifyOnce = new VerifyOnce(config.verifyOnce);
         <p>
           This is the information that the integrating system already knows and uses to compare against the information received from VerifyOnce.
         </p>
-        <p><input id="firstName" name="firstName" value="${
-          userData.firstName
-        }" /> <label for="firstName">First name</label></p>
-        <p><input id="lastName" name="lastName" value="${
-          userData.lastName
-        }" /> <label for="lastName">Last name</label></p>
-        <p><input id="country" name="country" value="${
-          userData.country
-        }" minlength="3" maxlength="3" /> <label for="country">Country code (3 letters)</label></p>
-        <p><input id="email" name="email" value="${
-          userData.email
-        }" /> <label for="email">Email</label></p>
+        <p>
+          <input id="country" name="country" value="${
+            userData.country
+          }" minlength="3" maxlength="3" />
+          <label for="country">Country code (3 letters)</label>
+        </p>
+        <p>
+          <input id="email" name="email" value="${userData.email}" />
+          <label for="email">Email</label>
+        </p>
+        <p>
+          <input id="username" name="username" value="${userData.username}" />
+          <label for="username">Username</label>
+        </p>
         <p>
           <button type="submit">Start verification</button>
         </p>
@@ -188,29 +187,26 @@ const verifyOnce = new VerifyOnce(config.verifyOnce);
 
     // extract initiation parameters
     const {
-      firstName,
-      lastName,
       country,
       email,
+      username,
     } = request.body as InitiateRequestParameters;
 
     // create new user
     const user: User = {
       id: generateUuid(),
-      firstName,
-      lastName,
       country,
       email,
+      username,
     };
     database.users.push(user);
 
     // attempt to initiate verification
     try {
       const initiateResponse = await verifyOnce.initiate({
-        firstName,
-        lastName,
         country: country as CountryCode,
         email,
+        userIdentifier: username,
       });
 
       // create new verification
@@ -370,27 +366,28 @@ function isCorrectUser(verification: CallbackInfo, user: User) {
     return false;
   }
 
-  // require first name to match (case-insensitive)
+  // require first name to be present
   if (
     verification.identityVerification.idFirstName === null ||
-    verification.identityVerification.idFirstName === "N/A" ||
-    user.firstName.toLowerCase() !==
-      verification.identityVerification.idFirstName.toLowerCase()
+    verification.identityVerification.idFirstName === "N/A"
   ) {
     return false;
   }
 
-  // require last name to match (case-insensitive)
+  // require last name to be present
   if (
     verification.identityVerification.idLastName === null ||
-    verification.identityVerification.idLastName === "N/A" ||
-    user.lastName.toLowerCase() !==
-      verification.identityVerification.idLastName.toLowerCase()
+    verification.identityVerification.idLastName === "N/A"
   ) {
     return false;
   }
 
-  // name matches, all good (integrator could choose to verify additional known info such as date of birth etc)
+  // require username to match
+  if (verification.transaction.integratorUserIdentifier !== user.username) {
+    return false;
+  }
+
+  // name present, all good (integrator could choose to verify additional known info such as date of birth etc)
   return true;
 }
 
