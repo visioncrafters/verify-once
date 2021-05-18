@@ -1,3 +1,8 @@
+## v1.27.0
+
+- `firstName` and `lastName` in `InitiateRequest` are deprecated.
+- Added `userIdentifier` to `InitiateRequest`.
+
 ## v1.26.0
 
 - Added new identity reject reasons:

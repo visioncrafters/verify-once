@@ -601,6 +601,7 @@ export interface Transaction {
   id: string;
   integratorId: string;
   userId: string;
+  integratorUserIdentifier: string | null;
   createdDate: string;
   updatedDate: string;
 }
@@ -633,9 +634,12 @@ export interface CallbackInfo {
 // initiation request data
 export interface InitiateRequest {
   country?: CountryCode;
-  firstName?: string;
-  lastName?: string;
   email?: string;
+  userIdentifier?: string;
+  /** @deprecated */
+  firstName?: string;
+  /** @deprecated */
+  lastName?: string;
 }
 
 // initiation request response data
