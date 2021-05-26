@@ -592,13 +592,23 @@ export interface User {
     createdDate: string;
     updatedDate: string;
 }
-export interface CallbackInfo {
+export declare enum CallbackEvent {
+    USER_UPDATED = "USER_UPDATED",
+    USER_UNLINKED = "USER_UNLINKED"
+}
+export interface CallbackInfoUserUpdated {
+    event: CallbackEvent.USER_UPDATED;
     transaction: Transaction;
     user: User;
     identityVerification: IdentityCallbackInfo | null;
     addressVerification: AddressCallbackInfo | null;
     nationalityVerification: NationalityCallbackInfo | null;
 }
+export interface CallbackInfoUserUnlinked {
+    event: CallbackEvent.USER_UNLINKED;
+    transaction: Transaction;
+}
+export declare type CallbackInfo = CallbackInfoUserUpdated | CallbackInfoUserUnlinked;
 export interface InitiateRequest {
     country?: CountryCode;
     email?: string;

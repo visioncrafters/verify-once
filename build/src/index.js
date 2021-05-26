@@ -50,7 +50,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.VerifyOnce = exports.UserStatus = exports.Nationality = exports.CountryCode = exports.IdentityRejectReason = exports.IdentityIdType = exports.VerificationStatus = void 0;
+exports.VerifyOnce = exports.CallbackEvent = exports.UserStatus = exports.Nationality = exports.CountryCode = exports.IdentityRejectReason = exports.IdentityIdType = exports.VerificationStatus = void 0;
 var axios_1 = __importDefault(require("axios"));
 var jsonwebtoken_1 = require("jsonwebtoken");
 // possible verification statuses
@@ -602,6 +602,11 @@ var UserStatus;
     UserStatus["ACTIVE"] = "ACTIVE";
     UserStatus["BLOCKED"] = "BLOCKED";
 })(UserStatus = exports.UserStatus || (exports.UserStatus = {}));
+var CallbackEvent;
+(function (CallbackEvent) {
+    CallbackEvent["USER_UPDATED"] = "USER_UPDATED";
+    CallbackEvent["USER_UNLINKED"] = "USER_UNLINKED";
+})(CallbackEvent = exports.CallbackEvent || (exports.CallbackEvent = {}));
 var VerifyOnce = /** @class */ (function () {
     function VerifyOnce(options) {
         this.options = __assign({ baseUrl: "https://app.verifyonce.com/api/verify" }, options);

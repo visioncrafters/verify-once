@@ -282,6 +282,10 @@ var verifyOnce = new src_1.VerifyOnce(config.verifyOnce);
 }); })().catch(function (error) { return console.error(error); });
 // returns whether verified user matches the correct (logged in) user
 function isCorrectUser(verification, user) {
+    // your application should handle all the other events as well
+    if (verification.event !== src_1.CallbackEvent.USER_UPDATED) {
+        return false;
+    }
     // consider not valid if identity verification has not been performed
     if (verification.identityVerification === null) {
         return false;
