@@ -622,14 +622,27 @@ export interface User {
   updatedDate: string;
 }
 
-// callback payload
-export interface CallbackInfo {
+export enum CallbackEvent {
+  USER_UPDATED = "USER_UPDATED",
+  USER_UNLINKED = "USER_UNLINKED",
+}
+
+export interface CallbackInfoUserUpdated {
+  event: CallbackEvent.USER_UPDATED;
   transaction: Transaction;
   user: User;
   identityVerification: IdentityCallbackInfo | null;
   addressVerification: AddressCallbackInfo | null;
   nationalityVerification: NationalityCallbackInfo | null;
 }
+
+export interface CallbackInfoUserUnlinked {
+  event: CallbackEvent.USER_UNLINKED;
+  transaction: Transaction;
+}
+
+// callback payload
+export type CallbackInfo = CallbackInfoUserUpdated | CallbackInfoUserUnlinked;
 
 // initiation request data
 export interface InitiateRequest {

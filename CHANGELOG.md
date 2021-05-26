@@ -2,6 +2,7 @@
 
 - `firstName` and `lastName` in `InitiateRequest` are deprecated.
 - Added `userIdentifier` to `InitiateRequest`.
+- Added `event` field to `CallbackInfo` object.
 
 ## v1.26.0
 

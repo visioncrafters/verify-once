@@ -12,7 +12,7 @@ import * as path from "path";
 import { v4 as generateUuid } from "uuid";
 
 import { version } from "../package.json";
-import { CallbackInfo, CountryCode, VerifyOnce } from "../src";
+import { CallbackEvent, CallbackInfo, CountryCode, VerifyOnce } from "../src";
 
 // notify of missing .env file
 if (!fs.existsSync(path.join(__dirname, ".env"))) {
@@ -361,6 +361,11 @@ const verifyOnce = new VerifyOnce(config.verifyOnce);
 
 // returns whether verified user matches the correct (logged in) user
 function isCorrectUser(verification: CallbackInfo, user: User) {
+  // your application should handle all the other events as well
+  if (verification.event !== CallbackEvent.USER_UPDATED) {
+    return false;
+  }
+
   // consider not valid if identity verification has not been performed
   if (verification.identityVerification === null) {
     return false;
