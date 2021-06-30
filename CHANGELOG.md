@@ -1,3 +1,7 @@
+## v1.28.0
+
+- Added `friendlyIdentifier` to `InitiateRequest`.
+
 ## v1.27.0
 
 - `firstName` and `lastName` in `InitiateRequest` are deprecated.

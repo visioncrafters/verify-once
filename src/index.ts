@@ -649,6 +649,7 @@ export interface InitiateRequest {
   country?: CountryCode;
   email?: string;
   userIdentifier?: string;
+  friendlyIdentifier?: string;
   /** @deprecated */
   firstName?: string;
   /** @deprecated */
