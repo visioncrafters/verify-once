@@ -1,3 +1,7 @@
+## v1.28.1
+
+- Bump axios from 0.21.1 to 0.21.2.
+
 ## v1.28.0
 
 - Added `friendlyIdentifier` to `InitiateRequest`.
