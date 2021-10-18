@@ -1,11 +1,11 @@
 {
   "name": "verify-once",
-  "version": "1.28.2",
+  "version": "1.29.0",
   "description": "VerifyOnce integration library and example",
   "main": "build/src/index.js",
   "types": "build/src/index.d.ts",
-  "repository": "https://github.com/stagnationlab/verify-once.git",
-  "author": "Stagnation Lab",
+  "repository": "https://github.com/visioncrafters/verify-once.git",
+  "author": "VisionCraft",
   "license": "MIT",
   "private": false,
   "scripts": {

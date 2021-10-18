@@ -1,3 +1,6 @@
+## v1.29.0
+- Changed repository and author to VisionCraft
+
 ## v1.28.1
 
 - Bump axios from 0.21.1 to 0.21.2.
